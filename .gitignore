@@ -17,4 +17,6 @@ backend/*.log
 .DS_Store
 Thumbs.db
 
-*.zip\ntools/\n
+# Project artifact ignore
+*.zip
+tools/
