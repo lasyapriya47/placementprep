@@ -69,6 +69,7 @@ export default function LoginPage() {
                 type="password"
                 className="w-full px-3 py-2 bg-[#0f172a] border border-slate-600 rounded text-slate-100"
               />
+              <p className="text-xs text-slate-400">Password must start with a capital letter and include at least one special character.</p>
               <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">Login</button>
             </form>
           ) : (
@@ -93,6 +94,7 @@ export default function LoginPage() {
                 type="password"
                 className="w-full px-3 py-2 bg-[#0f172a] border border-slate-600 rounded text-slate-100"
               />
+              <p className="text-xs text-slate-400">Use an email ending with @gmail.com or @edu.in. Password must start with a capital letter and include at least one special character.</p>
               <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">Signup</button>
             </form>
           )}

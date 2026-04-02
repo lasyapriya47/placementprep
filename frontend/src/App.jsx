@@ -1,4 +1,4 @@
-import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import { useContext, useState } from 'react';
 import HomePage from './pages/HomePage';
 import ToolsPage from './pages/ToolsPage';
@@ -20,8 +20,16 @@ const placementTasks = [
 export default function App() {
   const [expandPlacement, setExpandPlacement] = useState(false);
   const location = useLocation();
+  const { user } = useContext(UserContext);
 
   const isPlacementActive = location.pathname.startsWith('/placement-prep');
+
+  const ProtectedRoute = ({ children }) => {
+    if (!user) {
+      return <Navigate to="/login" replace />;
+    }
+    return children;
+  };
 
   return (
     <div className="min-h-screen bg-[#0f172a] text-slate-200">
@@ -73,14 +81,15 @@ export default function App() {
 
           <main className="space-y-6">
             <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/tools" element={<ToolsPage />} />
-              <Route path="/tools/:id" element={<ToolDetailPage />} />
-              <Route path="/recommendation" element={<RecommendationPage />} />
-              <Route path="/placement-prep" element={<PlacementPrepPage />} />
-              <Route path="/placement-prep/:taskId" element={<PlacementPrepPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/login" element={user ? <Navigate to="/" replace /> : <LoginPage />} />
+              <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+              <Route path="/tools" element={<ProtectedRoute><ToolsPage /></ProtectedRoute>} />
+              <Route path="/tools/:id" element={<ProtectedRoute><ToolDetailPage /></ProtectedRoute>} />
+              <Route path="/recommendation" element={<ProtectedRoute><RecommendationPage /></ProtectedRoute>} />
+              <Route path="/placement-prep" element={<ProtectedRoute><PlacementPrepPage /></ProtectedRoute>} />
+              <Route path="/placement-prep/:taskId" element={<ProtectedRoute><PlacementPrepPage /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+              <Route path="*" element={<Navigate to={user ? '/' : '/login'} replace />} />
             </Routes>
           </main>
 

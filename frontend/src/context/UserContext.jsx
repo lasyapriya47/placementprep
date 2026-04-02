@@ -2,7 +2,8 @@ import { createContext, useEffect, useState } from 'react';
 
 export const UserContext = createContext(null);
 
-const API_BASE = 'http://localhost:8080/auth';
+const emailRegex = /^[^\s@]+@(gmail\.com|edu\.in)$/i;
+const passwordRegex = /^(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).*$/;
 
 export function UserProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -20,41 +21,63 @@ export function UserProvider({ children }) {
     localStorage.setItem('aiToolsHubUser', JSON.stringify(userData));
   };
 
+  const validatePassword = (password) => {
+    if (!password || password.length < 2) return false;
+    if (password[0] !== password[0].toUpperCase()) return false;
+    if (!passwordRegex.test(password)) return false;
+    return true;
+  };
+
+  const validateEmail = (email) => {
+    return emailRegex.test(email.trim());
+  };
+
   const login = async ({ identity, password }) => {
     setError(null);
-    const response = await fetch(`${API_BASE}/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ identity, password }),
-    });
-
-    if (!response.ok) {
-      const result = await response.json();
-      setError(result.error || 'Login failed');
+    const value = identity.trim();
+    if (!value) {
+      setError('Username or email is required.');
+      return false;
+    }
+    if (!validatePassword(password.trim())) {
+      setError('Password must start with a capital letter and include at least one special character.');
       return false;
     }
 
-    const data = await response.json();
-    persistUser(data);
+    if (value.includes('@')) {
+      if (!validateEmail(value)) {
+        setError('Email must end with @gmail.com or @edu.in');
+        return false;
+      }
+      persistUser({ username: value.split('@')[0], email: value, loggedInAt: new Date().toISOString() });
+      return true;
+    }
+
+    persistUser({ username: value, email: '', loggedInAt: new Date().toISOString() });
     return true;
   };
 
   const signup = async ({ username, email, password }) => {
     setError(null);
-    const response = await fetch(`${API_BASE}/signup`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, email, password }),
-    });
+    const emailValue = email.trim();
+    const usernameValue = username.trim() || emailValue.split('@')[0] || 'guest';
 
-    if (!response.ok) {
-      const result = await response.json();
-      setError(result.error || 'Signup failed');
+    if (!validateEmail(emailValue)) {
+      setError('Email must end with @gmail.com or @edu.in');
+      return false;
+    }
+    if (!validatePassword(password.trim())) {
+      setError('Password must start with a capital letter and include at least one special character.');
       return false;
     }
 
-    const data = await response.json();
-    persistUser(data);
+    const userData = {
+      username: usernameValue,
+      email: emailValue,
+      createdAt: new Date().toISOString(),
+      loggedInAt: new Date().toISOString(),
+    };
+    persistUser(userData);
     return true;
   };
 
