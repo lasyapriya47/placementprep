@@ -1,0 +1,7 @@
+# Build artifacts
+node_modules/
+dist/
+.vite/
+# Local Vite output
+*.log
+

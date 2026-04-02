@@ -20,3 +20,8 @@ Thumbs.db
 # Project artifact ignore
 *.zip
 tools/
+node_modules/
+dist/
+.env
+target/
+*.class
