@@ -1,0 +1,19 @@
+# Ignore nested repo metadata
+frontend/.git
+backend/.git
+
+# Frontend build and dependencies
+frontend/dist/
+frontend/node_modules/
+frontend/.vite/
+frontend/*.log
+
+# Backend build output
+backend/target/
+backend/.mvn/
+backend/*.log
+
+# System files
+.DS_Store
+Thumbs.db
+

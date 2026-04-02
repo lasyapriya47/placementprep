@@ -1,0 +1,11 @@
+# Ignore backend and local tooling for Vercel deployments
+backend/
+bin/
+tools/
+*.zip
+*.log
+*.tmp
+*.swp
+.vscode/
+.settings/
+.idea/
